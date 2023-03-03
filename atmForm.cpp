@@ -1,4 +1,5 @@
 #include "atmForm.h"
+#include "errorWindow.h"
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -40,8 +41,15 @@ void atmForm::buttonA_Event() {
 		// Changes current_state to PIN
 		int cust_num{};  // equivalent to an Int32, not an Int16.
 		Int32::TryParse(textBox1->Text, cust_num);  // put into if statement later.
-		current_atm.set_custNum(cust_num);
-		current_atm.set_state(state::PIN);
+		if (Int32::TryParse(textBox1->Text, cust_num)) {
+			current_atm.set_custNum(cust_num);
+			current_atm.set_state(state::PIN);
+		}
+		else {
+			// modal window with error message.
+			// Clear textBox1 and then do nothing. Should this be in the window function?
+			error_window("Please enter a valid number.");
+		}
 		break;
 	}
 	case state::PIN: {
@@ -49,8 +57,15 @@ void atmForm::buttonA_Event() {
 		// Changes current_state to ACCOUNT
 		int pin{};
 		Int32::TryParse(textBox1->Text, pin);  // put into if statement later.
-		current_atm.set_pin(pin);
-		current_atm.set_state(state::ACCOUNT);
+		if (Int32::TryParse(textBox1->Text, pin)) {
+			current_atm.set_pin(pin);
+			current_atm.set_state(state::ACCOUNT);
+		}
+		else {
+			// Modal window with error message.
+			// Clear textBox1.
+			error_window("Please enter a valid number.");
+		}
 		break;
 	}
 	case state::ACCOUNT: {
@@ -66,8 +81,15 @@ void atmForm::buttonA_Event() {
 		// Changes current_state to ACCOUNT
 		double trans_amount{};
 		Double::TryParse(textBox1->Text, trans_amount);  // put into if statement later. not sure why it's not working?
-		current_atm.set_transType(transactionType::WITHDRAWAL);
-		current_atm.set_transAmount(trans_amount);
+		if (Double::TryParse(textBox1->Text, trans_amount)) {
+			current_atm.set_transType(transactionType::WITHDRAWAL);
+			current_atm.set_transAmount(trans_amount);
+		}
+		else {
+			// Modal window with error message.
+			// Clear textBox1
+			error_window("Please enter a valid dollar amount.");
+		}
 		break;
 	}
 	}
@@ -89,8 +111,14 @@ void atmForm::buttonB_Event() {
 		// Changes current_state to ACCOUNT
 		double user_amount = 0.0;
 		Double::TryParse(textBox1->Text, user_amount);
-		current_atm.set_transType(transactionType::DEPOSIT);
-		current_atm.set_transAmount(user_amount);
+		if (Double::TryParse(textBox1->Text, user_amount)) {
+			current_atm.set_transType(transactionType::DEPOSIT);
+			current_atm.set_transAmount(user_amount);
+		}
+		else {
+			// Modal window with error message.
+			error_window("Please enter a valid dollar amount.");
+		}
 		break;
 	}
 	}
@@ -126,7 +154,7 @@ void atmForm::change_formState() {
 		// buttonC = "Exit"
 		// textBox2 = "Enter cust num and press OK"
 		buttonA->Text = "OK";
-		buttonB->Text = "";
+		buttonB->Visible = false;
 		buttonC->Text = "Exit";
 		textBox2->Text = "Enter customer number and press OK.";
 		break;
@@ -137,8 +165,8 @@ void atmForm::change_formState() {
 		// buttonC = null
 		// textBox2 = "Enter PIN and press OK"
 		buttonA->Text = "OK";
-		buttonB->Text = "";
-		buttonC->Text = "";
+		buttonB->Visible = false;
+		buttonC->Visible = false;
 		textBox2->Text = "Enter PIN and press OK.";
 		break;
 	}
@@ -148,7 +176,9 @@ void atmForm::change_formState() {
 		// buttonC = "Cancel"
 		// textBox2 = "Select Account"
 		buttonA->Text = "Checking";
+		buttonB->Visible = true;
 		buttonB->Text = "Savings";
+		buttonC->Visible = true;
 		buttonC->Text = "Cancel";
 		textBox2->Text = "Select account type.";
 		break;
@@ -159,11 +189,20 @@ void atmForm::change_formState() {
 		// buttonC = "Cancel"
 		// textBox2 = "Balance... Enter amount and select transaction"
 		buttonA->Text = "Withdraw";
+		buttonB->Visible = true;
 		buttonB->Text = "Deposit";
+		buttonC->Visible = true;
 		buttonC->Text = "Cancel";
 		textBox2->Text = "Balance: $0.0\nEnter amount and select transaction type.";
 		break;
 	}
 	}
+	textBox1->Clear();
+}
+
+void atmForm::error_window(System::String^ error_text) {
+	errorWindow^ e = gcnew errorWindow();
+	e->getLabel()->Text = error_text;
+	e->ShowDialog();
 	textBox1->Clear();
 }

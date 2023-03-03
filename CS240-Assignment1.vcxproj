@@ -121,16 +121,23 @@
   <ItemGroup>
     <ClCompile Include="atm.cpp" />
     <ClCompile Include="atmForm.cpp" />
+    <ClCompile Include="errorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="atm.h" />
     <ClInclude Include="atmForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="errorWindow.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="atmForm.resx">
       <DependentUpon>atmForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="errorWindow.resx">
+      <DependentUpon>errorWindow.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
